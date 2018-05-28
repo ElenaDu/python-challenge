@@ -1,6 +1,7 @@
 import csv
 import os
 file_name=os.path.join("raw_data","employee_data1.csv")
+#file_name=os.path.join("raw_data","employee_data2.csv")
 csv_list=[]
 us_state_abbrev = {
     'Alabama': 'AL','Alaska': 'AK','Arizona': 'AZ','Arkansas': 'AR',
@@ -24,26 +25,27 @@ with open(file_name, "r", newline='') as csv_file:
     
 for row in csv_list:
     
-#split the Name column into separate First Name and Last Name columns
+    # split the Name column into separate First Name and Last Name columns
     name_lastname=row['Name'].split(' ')
     row['First Name']=name_lastname[0]
     row['Last Name']=name_lastname[1]
     row.pop('Name')   
     
-#re-write DOB data in MM/DD/YYYY format.   
+    # re-write DOB data in MM/DD/YYYY format.   
     row['DOB']=row['DOB'][5:7]+"/"+row['DOB'][-2:]+"/"+row['DOB'][:4]
     
-# re-write SSN data such that the first five numbers are hidden from view.     
+    # re-write SSN data such that the first five numbers are hidden from view.     
     row['SSN']="***-**-"+row['SSN'][-4:]
     
-#re-write State data as simple two-letter abbreviations.  
+    # re-write State data as simple two-letter abbreviations.  
     if us_state_abbrev.get(row['State']):
        row['State']=us_state_abbrev.get(row['State'])
 
-#export data
+# export data
 with open("results.csv", "w", newline='') as new_file:
      field_names=['Emp ID','First Name','Last Name','DOB','SSN','State']
      csvwriter=csv.DictWriter(new_file, fieldnames=field_names)
      csvwriter.writeheader()
      csvwriter.writerows(csv_list)
-
+     
+print("Converted data is stored in results.csv")
